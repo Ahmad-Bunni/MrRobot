@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MrRobot.Domain\MrRobot.Domain.csproj" />
+    <ProjectReference Include="..\MrRobot.Infrastructure\MrRobot.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
