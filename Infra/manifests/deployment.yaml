@@ -5,7 +5,7 @@ metadata:
   labels:
     app: mr-robot
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mr-robot
@@ -17,7 +17,8 @@ spec:
       containers:
         - name: mr-robot
           ports:
-            - containerPort: 3000
+            - name: http
+              containerPort: 5000
           image: acrmrrobotdev.azurecr.io/mrrobot:v1
           imagePullPolicy: IfNotPresent
           resources:
