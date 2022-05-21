@@ -53,7 +53,6 @@ jobs:
         with:
           manifests: |
             ${{ github.workspace }}/Infra/manifests/deployment.yaml
-            ${{ github.workspace }}/Infra/manifests/ingress.yaml
             ${{ github.workspace }}/Infra/manifests/service.yaml
           images: |
             ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}

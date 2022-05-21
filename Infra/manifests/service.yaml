@@ -11,4 +11,4 @@ spec:
       targetPort: 3000
   selector:
     app: mr-robot
-  type: ClusterIP
+  type: LoadBalancer
