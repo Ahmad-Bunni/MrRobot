@@ -9,4 +9,4 @@ spec:
       targetPort: 9376
       protocol: TCP
   selector:
-    service: mr-robot
+    app: mr-robot
