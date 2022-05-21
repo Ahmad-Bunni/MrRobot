@@ -16,9 +16,8 @@ spec:
     spec:
       containers:
         - name: mr-robot
-          image: acrmrrobotdev.azurecr.io/mrrobot:{{image_tag}}
-          ports:
-            - containerPort: 8080
+          image: acrmrrobotdev.azurecr.io/mrrobot:v1
+          imagePullPolicy: IfNotPresent
           resources:
             limits:
               memory: 512Mi
