@@ -12,10 +12,10 @@ spec:
   template:
     metadata:
       labels:
-        app: app: mr-robot
+        app: mr-robot
     spec:
       containers:
         - name: mr-robot
-          image: ""
+          image: ''
           ports:
             - containerPort: 8080
