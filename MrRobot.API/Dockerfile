@@ -6,7 +6,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["MrRobot.API.csproj", "MrRobot.API/"]
-RUN dotnet restore "MrRobot.API.csproj"
+RUN cd ..
+
+RUN dotnet restore "MrRobot.API/MrRobot.API.csproj"
 COPY . .
 RUN dotnet build "MrRobot.API.csproj" -c Release -o /app/build
 
