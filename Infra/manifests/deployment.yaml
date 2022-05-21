@@ -18,4 +18,4 @@ spec:
         - name: mr-robot
           image: acrmrrobotdev.azurecr.io/mrrobot:{{image_tag}}
           ports:
-            - containerPort: 8080
+            - containerPort: 80
