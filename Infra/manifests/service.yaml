@@ -1,5 +1,9 @@
 apiVersion: v1
 kind: Service
+selector:
+  app: mr-robot
+labels:
+  app: mr-robot
 metadata:
   name: mr-robot-service
 spec:
@@ -8,5 +12,3 @@ spec:
     - port: 8080
       targetPort: 9376
       protocol: TCP
-  selector:
-    app: mr-robot
