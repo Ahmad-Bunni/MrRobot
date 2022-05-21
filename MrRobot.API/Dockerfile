@@ -8,7 +8,6 @@ WORKDIR /src
 COPY ["MrRobot.API.csproj", "MrRobot.API/"]
 RUN dotnet restore "MrRobot.API/MrRobot.API.csproj"
 COPY . .
-WORKDIR "/src/MrRobot.API"
 RUN dotnet build "MrRobot.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
