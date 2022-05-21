@@ -17,7 +17,7 @@ spec:
       containers:
         - name: mr-robot
           ports:
-            - containerPort: 80
+            - containerPort: 5000
           image: acrmrrobotdev.azurecr.io/mrrobot:v1
           resources:
             limits:
