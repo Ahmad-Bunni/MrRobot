@@ -7,8 +7,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet restore "MrRobot.API/MrRobot.API.csproj"
-COPY . .
-RUN dotnet build "MrRobot.API.csproj" -c Release -o /app/build
+RUN dotnet build "MrRobot.API/MrRobot.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "MrRobot.API.csproj" -c Release -o /app/publish
