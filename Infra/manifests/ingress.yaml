@@ -1,14 +1,18 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mr-robot-ingress
+  name: minimal-ingress
   annotations:
-    kubernetes.io/ingress.class: "kong"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx-example
   rules:
     - http:
         paths:
           - path: /api
+            pathType: Prefix
             backend:
-              serviceName: mr-robot-api-service
-              servicePort: 3000
+              service:
+                name: mr-robot-api-service
+                port:
+                  number: 3000
