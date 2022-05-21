@@ -30,7 +30,7 @@ jobs:
       # Set the target Azure Kubernetes Service (AKS) cluster.
       - uses: azure/aks-set-context@v1
         with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
           cluster-name: ${{ env.CLUSTER_NAME }}
           resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
 
@@ -53,6 +53,7 @@ jobs:
         with:
           manifests: |
             ${{ github.workspace }}/Infra/manifests/deployment.yaml
+            ${{ github.workspace }}/Infra/manifests/ingress.yaml
             ${{ github.workspace }}/Infra/manifests/service.yaml
           images: |
             ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
