@@ -5,12 +5,12 @@ env:
   REGISTRY_NAME: acrmrrobotdev
   CLUSTER_NAME: aks-cluster-mrrobot-dev
   CLUSTER_RESOURCE_GROUP: mrrobot-dev-rg
-  NAMESPACE: default
+  NAMESPACE: mrrobot
   SECRET: mr-robot-api-registery-secret
   APP_NAME: mrrobot
 
 jobs:
-  build:
+  build:clear
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
