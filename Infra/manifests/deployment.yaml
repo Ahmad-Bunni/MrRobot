@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: mr-robot-deployment
   labels:
-    app: nginx
+    app: mr-robot
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: nginx
+      app: mr-robot
   template:
     metadata:
       labels:
-        app: nginx
+        app: app: mr-robot
     spec:
       containers:
-        - name: nginx
-          image: nginx:1.14.2
+        - name: mr-robot
+          image: ""
           ports:
-            - containerPort: 80
+            - containerPort: 8080
