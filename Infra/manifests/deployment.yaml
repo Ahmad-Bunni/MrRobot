@@ -16,6 +16,8 @@ spec:
     spec:
       containers:
         - name: mr-robot
+          ports:
+            - containerPort: 3000
           image: acrmrrobotdev.azurecr.io/mrrobot:v1
           imagePullPolicy: IfNotPresent
           resources:
