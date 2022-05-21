@@ -7,9 +7,9 @@ metadata:
 spec:
   ports:
     - name: http
-      port: 80
+      port: 8080
       protocol: TCP
-      targetPort: http
+      targetPort: 5000
   selector:
     app: mr-robot
   type: LoadBalancer
