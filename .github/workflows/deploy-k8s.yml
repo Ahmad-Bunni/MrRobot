@@ -41,8 +41,8 @@ jobs:
       - uses: azure/k8s-bake@v2.2
         with:
           renderEngine: "helm"
-          helmChart: "./Infra/mrrobot-api/"
-          overrideFiles: "./Infra/mrrobot-api/values-override.yaml"
+          helmChart: "./Infra/charts/mrrobot-api/"
+          overrideFiles: "./Infra/charts/mrrobot-api/values-override.yaml"
           overrides: |
             image.repository: ${{ secrets.REGISTRY_SERVER }}/${{ env.APP_NAME }}
             image.tag: ${{ github.sha }}
