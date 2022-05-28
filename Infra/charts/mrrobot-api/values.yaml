@@ -1,3 +1,4 @@
+namespace: ""
 replicaCount: 1
 
 image:

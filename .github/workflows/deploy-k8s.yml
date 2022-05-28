@@ -52,6 +52,7 @@ jobs:
           overrides: |
             image.repository: ${{ secrets.REGISTRY_SERVER }}/${{ env.APP_NAME }}
             image.tag: ${{ github.sha }}
+            namespace: ${{ env.NAMESPACE }}
           helm-version: "latest"
         id: bake
 
