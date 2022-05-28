@@ -94,3 +94,138 @@ app.kubernetes.io/name: {{ template "kong.name" . }}
 app.kubernetes.io/component: app
 app.kubernetes.io/instance: "{{ .Release.Name }}"
 {{- end -}}
+
+{{/*
+Create Ingress resource for a Kong service
+*/}}
+{{- define "kong.ingress" -}}
+{{- $servicePort := include "kong.ingress.servicePort" . }}
+{{- $path := .ingress.path -}}
+{{- $hostname := .ingress.hostname -}}
+{{- $pathType := .ingress.pathType -}}
+apiVersion: {{ .ingressVersion }}
+kind: Ingress
+metadata:
+  name: {{ .fullName }}-{{ .serviceName }}
+  namespace: {{ .namespace }}
+  labels:
+  {{- .metaLabels | nindent 4 }}
+  {{- if .ingress.annotations }}
+  annotations:
+    {{- range $key, $value := .ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+{{- if (and (not (eq .ingressVersion "extensions/v1beta1")) .ingress.ingressClassName) }}
+  ingressClassName: {{ .ingress.ingressClassName }}
+{{- end }}
+  rules:
+  - host: {{ $hostname | quote }}
+    http:
+      paths:
+        - backend:
+          {{- if (not (eq .ingressVersion "networking.k8s.io/v1")) }}
+            serviceName: {{ .fullName }}-{{ .serviceName }}
+            servicePort: {{ $servicePort }}
+          {{- else }}
+            service:
+              name: {{ .fullName }}-{{ .serviceName }}
+              port:
+                number: {{ $servicePort }}
+            {{- end }}
+          path: {{ $path }}
+          {{- if (not (eq .ingressVersion "extensions/v1beta1")) }}
+          pathType: {{ $pathType }}
+          {{- end }}
+  {{- if (hasKey .ingress "tls") }}
+  tls:
+  - hosts:
+    - {{ $hostname | quote }}
+    secretName: {{ .ingress.tls }}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Create Service resource for a Kong service
+*/}}
+{{- define "kong.service" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .fullName }}-{{ .serviceName }}
+  namespace: {{ .namespace }}
+  {{- if .annotations }}
+  annotations:
+  {{- range $key, $value := .annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- end }}
+  labels:
+    {{- .metaLabels | nindent 4 }}
+  {{- range $key, $value := .labels }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+spec:
+  type: {{ .type }}
+  {{- if eq .type "LoadBalancer" }}
+  {{- if .loadBalancerIP }}
+  loadBalancerIP: {{ .loadBalancerIP }}
+  {{- end }}
+  {{- if .loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+  {{- range $cidr := .loadBalancerSourceRanges }}
+  - {{ $cidr }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if .externalIPs }}
+  externalIPs:
+  {{- range $ip := .externalIPs }}
+  - {{ $ip }}
+  {{- end -}}
+  {{- end }}
+  ports:
+  {{- if .http }}
+  {{- if .http.enabled }}
+  - name: kong-{{ .serviceName }}
+    port: {{ .http.servicePort }}
+    targetPort: {{ .http.containerPort }}
+    appProtocol: http
+  {{- if (and (or (eq .type "LoadBalancer") (eq .type "NodePort")) (not (empty .http.nodePort))) }}
+    nodePort: {{ .http.nodePort }}
+  {{- end }}
+    protocol: TCP
+  {{- end }}
+  {{- end }}
+  {{- if .tls.enabled }}
+  - name: kong-{{ .serviceName }}-tls
+    port: {{ .tls.servicePort }}
+    targetPort: {{ .tls.overrideServiceTargetPort | default .tls.containerPort }}
+    appProtocol: https
+  {{- if (and (or (eq .type "LoadBalancer") (eq .type "NodePort")) (not (empty .tls.nodePort))) }}
+    nodePort: {{ .tls.nodePort }}
+  {{- end }}
+    protocol: TCP
+  {{- end }}
+  {{- if (hasKey . "stream") }}
+  {{- range .stream }}
+  - name: stream{{ if (eq (default "TCP" .protocol) "UDP") }}udp{{ end }}-{{ .containerPort }}
+    port: {{ .servicePort }}
+    targetPort: {{ .containerPort }}
+    {{- if (and (or (eq $.type "LoadBalancer") (eq $.type "NodePort")) (not (empty .nodePort))) }}
+    nodePort: {{ .nodePort }}
+    {{- end }}
+    protocol: {{ .protocol | default "TCP" }}
+  {{- end }}
+  {{- end }}
+  {{- if .externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .externalTrafficPolicy }}
+  {{- end }}
+  {{- if .clusterIP }}
+  clusterIP: {{ .clusterIP }}
+  {{- end }}
+  selector:
+    {{- .selectorLabels | nindent 4 }}
+{{- end -}}
+
