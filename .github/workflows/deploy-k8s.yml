@@ -2,12 +2,9 @@ on: [push]
 
 # Environment variables available to all jobs and steps in this workflow
 env:
-  REGISTRY_NAME: acrmrrobotdev
-  CLUSTER_NAME: aks-cluster-mrrobot-dev
-  CLUSTER_RESOURCE_GROUP: mrrobot-dev-rg
-  NAMESPACE: mrrobot
-  SECRET: mr-robot-api-registery-secret
+  REGISTRY_SECRET_NAME: mr-robot-api-registery-secret
   APP_NAME: mrrobot
+  NAMESPACE: mrrobot-api
 
 jobs:
   build:
@@ -18,44 +15,46 @@ jobs:
       # Connect to Azure Container Registry (ACR)
       - uses: azure/docker-login@v1
         with:
-          login-server: ${{ env.REGISTRY_NAME }}.azurecr.io
+          login-server: ${{ secrets.REGISTRY_SERVER }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       # Container build and push to a Azure Container Registry (ACR)
       - run: |
-          docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
-          docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+          docker build . -t ${{ secrets.REGISTRY_SERVER }}/${{ env.APP_NAME }}:${{ github.sha }}
+          docker push ${{ secrets.REGISTRY_SERVER }}/${{ env.APP_NAME }}:${{ github.sha }}
 
       # Set the target Azure Kubernetes Service (AKS) cluster.
       - uses: azure/aks-set-context@v1
         with:
-          creds: "${{ secrets.AZURE_CREDENTIALS }}"
-          cluster-name: ${{ env.CLUSTER_NAME }}
-          resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
-
-      # Create namespace if doesn't exist
-      - run: |
-          kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o json | kubectl apply -f -
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
       # Create image pull secret for ACR
       - uses: azure/k8s-create-secret@v1
         with:
-          container-registry-url: ${{ env.REGISTRY_NAME }}.azurecr.io
+          container-registry-url: ${{ secrets.REGISTRY_SERVER }}
           container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
           container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-          secret-name: ${{ env.SECRET }}
+          secret-name: ${{ env.REGISTRY_SECRET_NAME }}
           namespace: ${{ env.NAMESPACE }}
           arguments: --force true
+
+      # Create image pull secret for ACR
+      - uses: azure/k8s-bake@v2.2
+        with:
+          renderEngine: "helm"
+          helmChart: "./Infra/mrrobot-api/"
+          overrideFiles: "./Infra/mrrobot-api/values-override.yaml"
+          overrides: |
+            image.repository: ${{ secrets.REGISTRY_SERVER }}/${{ env.APP_NAME }}
+            image.tag: ${{ github.sha }}
+          helm-version: "latest"
+        id: bake
 
       # Deploy app to AKS
       - uses: azure/k8s-deploy@v1
         with:
-          manifests: |
-            ${{ github.workspace }}/Infra/manifests/deployment.yaml
-            ${{ github.workspace }}/Infra/manifests/service.yaml
-          images: |
-            ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
-          imagepullsecrets: |
-            ${{ env.SECRET }}
+          manifests: ${{ steps.bake.outputs.manifestsBundle }}
+          images: ${{ secrets.REGISTRY_SERVER }}/${{ env.APP_NAME }}:${{ github.sha }}
+          imagepullsecrets: ${{ env.REGISTRY_SECRET_NAME }}
           namespace: ${{ env.NAMESPACE }}
