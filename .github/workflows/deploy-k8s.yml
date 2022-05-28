@@ -29,6 +29,10 @@ jobs:
         with:
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
+      # Create namespace if doesn't exist
+      - run: |
+          kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o json | kubectl apply -f -
+
       # Create image pull secret for ACR
       - uses: azure/k8s-create-secret@v1
         with:
@@ -36,6 +40,8 @@ jobs:
           container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
           container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
           secret-name: ${{ env.REGISTRY_SECRET_NAME }}
+          namespace: ${{ env.NAMESPACE }}
+          arguments: --force true
 
       # Create image pull secret for ACR
       - uses: azure/k8s-bake@v2.2
