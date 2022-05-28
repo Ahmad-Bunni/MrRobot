@@ -198,6 +198,7 @@ spec:
     protocol: TCP
   {{- end }}
   {{- end }}
+   {{- if .tls }}
   {{- if .tls.enabled }}
   - name: kong-{{ .serviceName }}-tls
     port: {{ .tls.servicePort }}
