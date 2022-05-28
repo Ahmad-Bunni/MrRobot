@@ -25,7 +25,7 @@ jobs:
           docker push ${{ secrets.REGISTRY_SERVER }}/${{ env.APP_NAME }}:${{ github.sha }}
 
       # Set the target Azure Kubernetes Service (AKS) cluster.
-      - uses: azure/k8s-set-context@v1
+      - uses: azure/k8s-set-context@v2
         with:
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
@@ -36,8 +36,6 @@ jobs:
           container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
           container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
           secret-name: ${{ env.REGISTRY_SECRET_NAME }}
-          namespace: ${{ env.NAMESPACE }}
-          arguments: --force true
 
       # Create image pull secret for ACR
       - uses: azure/k8s-bake@v2.2
