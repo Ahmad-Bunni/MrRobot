@@ -4,7 +4,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ .Values.ingress.ingressClassName }}
   labels:
     {{- include "mrrobot-api.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -12,8 +12,8 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if and .Values.ingress.className }}
-  ingressClassName: {{ .Values.ingress.className }}
+  {{- if and .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
   {{- end }}
   {{- if .Values.ingress.tls }}
   tls:

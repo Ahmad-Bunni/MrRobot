@@ -26,8 +26,18 @@ service:
   type: ClusterIP
   port: 80
 
-ingress:
+deployment:
+  kong:
+    enabled: true
+
+proxy:
   enabled: true
+  type: LoadBalancer
+  annotations: {}
+
+ingress:
+  ingressClassName: kong-ingress
+  enabled: false
   annotations:
     kubernetes.io/ingress.class: kong
     # kubernetes.io/tls-acme: "true"
