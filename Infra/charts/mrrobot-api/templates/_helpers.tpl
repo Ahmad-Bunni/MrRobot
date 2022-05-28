@@ -198,7 +198,7 @@ spec:
     protocol: TCP
   {{- end }}
   {{- end }}
-   {{- if .tls }}
+  {{- if .tls }}
   {{- if .tls.enabled }}
   - name: kong-{{ .serviceName }}-tls
     port: {{ .tls.servicePort }}
@@ -208,6 +208,7 @@ spec:
     nodePort: {{ .tls.nodePort }}
   {{- end }}
     protocol: TCP
+  {{- end }}
   {{- end }}
   {{- if (hasKey . "stream") }}
   {{- range .stream }}
