@@ -20,3 +20,4 @@ module "container_registries" {
   resource_group_name     = module.resource_groups.mrrobot_rg_name
   resource_group_location = module.resource_groups.mrrobot_rg_location
 }
+
