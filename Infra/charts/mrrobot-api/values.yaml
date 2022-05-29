@@ -9,6 +9,8 @@ service:
   type: ClusterIP
   port: 80
 
+fullnameOverride: mrrobot-api
+
 resources: {}
 
 podAnnotations: {}
