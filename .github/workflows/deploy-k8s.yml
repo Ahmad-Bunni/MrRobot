@@ -1,6 +1,5 @@
 on: [push]
 
-# Environment variables available to all jobs and steps in this workflow
 env:
   REGISTRY_SECRET_NAME: mr-robot-api-registery-secret
   APP_NAME: mrrobot
@@ -43,7 +42,7 @@ jobs:
           namespace: ${{ env.NAMESPACE }}
           arguments: --force true
 
-      # Create image pull secret for ACR
+      # Bake helm charts into manifests bundle
       - uses: azure/k8s-bake@v2.2
         with:
           renderEngine: "helm"

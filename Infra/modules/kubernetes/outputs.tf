@@ -3,7 +3,7 @@ output "client_certificate" {
   sensitive = true
 }
 
-output "kube_config" {
+output "kube_config_raw" {
   value     = azurerm_kubernetes_cluster.mrrobot-k8s.kube_config_raw
   sensitive = true
 }
