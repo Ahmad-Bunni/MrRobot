@@ -6,7 +6,7 @@ using MrRobot.Domain.DTOs;
 
 namespace MrRobot.API.Controllers;
 
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class RobotsController : ControllerBase
 {
