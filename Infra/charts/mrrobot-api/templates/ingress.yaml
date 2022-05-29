@@ -3,6 +3,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
   name: {{ $fullName }}
   namespace: {{ .Values.namespace }}
   labels:
@@ -12,8 +14,8 @@ spec:
   rules:
   - http:
       paths:
-      - pathType: Prefix
-        path: "/mrrobot"
+      - path: /mrrobot(/|$)(.*)
+        pathType: Prefix
         backend:
           service:
             name: {{ $fullName }}
