@@ -24,6 +24,8 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+app.MapGet("/health", () => "Running!");
+
 await app.InitializeDatabase();
 
 if (app.Environment.IsDevelopment())
@@ -32,7 +34,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => "Running!");
+
 app.UseHttpsRedirection();
 
 app.MapControllers();
