@@ -18,4 +18,4 @@ spec:
           service:
             name: {{ $fullName }}
             port:
-              number: 8000
+              number: {{ $svcPort }}
