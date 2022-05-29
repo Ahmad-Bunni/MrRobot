@@ -1,75 +1,21 @@
-namespace: ""
 replicaCount: 1
-
+namespace: ""
 image:
   repository: ""
   tag: ""
   pullPolicy: IfNotPresent
 
-imagePullSecrets: []
+service:
+  type: ClusterIP
+  port: 80
 
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: false
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
+resources: {}
 
 podAnnotations: {}
 
 podSecurityContext: {}
 
 securityContext: {}
-
-service:
-  type: ClusterIP
-  port: 80
-
-deployment:
-  kong:
-    enabled: true
-
-proxy:
-  enabled: true
-  type: LoadBalancer
-  annotations: {}
-
-  http:
-    # Enable plaintext HTTP listen for the proxy
-    enabled: true
-    servicePort: 80
-    containerPort: 80
-    # Set a nodePort which is available if service type is NodePort
-    # nodePort: 32080
-    # Additional listen parameters, e.g. "reuseport", "backlog=16384"
-    parameters: []
-
-ingress:
-  ingressClassName: kong-ingress
-  enabled: false
-  annotations:
-    kubernetes.io/ingress.class: kong
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /mrrobot
-          pathType: Prefix
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
-resources: {}
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 2
-  targetCPUUtilizationPercentage: 80
-  targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 
